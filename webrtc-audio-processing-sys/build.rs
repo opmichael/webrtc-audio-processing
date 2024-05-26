@@ -89,6 +89,7 @@ mod webrtc {
 
     pub(super) fn build_if_necessary() -> Result<(), Error> {
         let build_dir = copy_source_to_out_dir()?;
+        let host = std::env::var("TARGET").unwrap();
 
         if cfg!(target_os = "macos") {
             run_command(&build_dir, "glibtoolize", None)?;
@@ -101,6 +102,7 @@ mod webrtc {
         run_command(&build_dir, "autoconf", None)?;
 
         autotools::Config::new(build_dir)
+            .config_option("host", host.as_str().into())
             .cflag("-fPIC")
             .cxxflag("-fPIC")
             .disable_shared()
